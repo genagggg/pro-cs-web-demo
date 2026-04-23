@@ -1,0 +1,40 @@
+{
+  "name": "pro-cs-web-demo",
+  "version": "1.0.0",
+  "description": "Enterprise logistics system monorepo",
+  "private": true,
+  "workspaces": [
+    "host",
+    "remote-radar", 
+    "remote-offers",
+    "mock-server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:host\" \"npm run dev:radar\" \"npm run dev:offers\" \"npm run dev:mock\"",
+    "dev:host": "npm run dev --workspace=host",
+    "dev:radar": "npm run dev --workspace=remote-radar",
+    "dev:offers": "npm run dev --workspace=remote-offers",
+    "dev:mock": "npm run dev --workspace=mock-server",
+    "build": "npm run build --workspaces",
+    "clean": "rimraf node_modules && npm run clean --workspaces",
+    "clean:all": "rimraf node_modules && rimraf host/node_modules && rimraf remote-radar/node_modules && rimraf remote-offers/node_modules && rimraf mock-server/node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "concurrently": "^8.2.2",
+    "dotenv-webpack": "^8.0.1",
+    "html-webpack-plugin": "^5.6.0",
+    "rimraf": "^6.0.1",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
+  }
+}
