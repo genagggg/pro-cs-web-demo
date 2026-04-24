@@ -6,9 +6,9 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
-  
+
   return {
-    entry: './src/bootstrap.tsx',
+    entry: './src/index.ts',
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: isProduction ? '[name].[contenthash].js' : '[name].js',
@@ -36,9 +36,17 @@ module.exports = (env, argv) => {
           use: {
             loader: 'ts-loader',
             options: {
-              configFile: path.resolve(__dirname, '../tsconfig.simple.json')
+              configFile: path.resolve(__dirname, '../tsconfig.json')
             }
           }
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader']
+        },
+        {
+          test: /\.(png|jpg|jpeg|gif|svg)$/,
+          type: 'asset/resource'
         }
       ]
     },
@@ -59,14 +67,6 @@ module.exports = (env, argv) => {
           'react-dom': {
             singleton: true,
             requiredVersion: '^18.2.0'
-          },
-          'react-redux': {
-            singleton: true,
-            requiredVersion: '^9.0.4'
-          },
-          '@reduxjs/toolkit': {
-            singleton: true,
-            requiredVersion: '^2.0.1'
           }
         }
       }),

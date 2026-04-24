@@ -5,10 +5,10 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
+    "incremental": true,
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
@@ -16,11 +16,7 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "baseUrl": ".",
-    "paths": {
-      "*": ["*", "host/src/*", "remote-radar/src/*", "remote-offers/src/*"]
-    }
+    "esModuleInterop": true
   },
   "include": [
     "host/src/**/*",

@@ -36,9 +36,13 @@ module.exports = (env, argv) => {
           use: {
             loader: 'ts-loader',
             options: {
-              configFile: path.resolve(__dirname, '../tsconfig.simple.json')
+              configFile: path.resolve(__dirname, '../tsconfig.json')
             }
           }
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader']
         }
       ]
     },
