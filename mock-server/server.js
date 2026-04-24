@@ -51,41 +51,41 @@ const generateCargoes = () => {
 let cargoes = generateCargoes();
 
 // Функция обновления позиций грузов (движение по окружности)
-const updateCargoPositions = () => {
-  cargoes = cargoes.map(cargo => {
-    // Если груз не в движении, не меняем позицию
-    if (cargo.status !== 'moving') {
-      return cargo;
-    }
+  const updateCargoPositions = () => {
+    cargoes = cargoes.map(cargo => {
+      // Увеличиваем угол для движения по окружности (даже для stopped/pending)
+      const newAngle = cargo.angle + 0.02;
+      
+      // Рассчитываем новую позицию
+      const lat = MOSCOW_CENTER.lat + RADIUS * Math.cos(newAngle) * (0.7 + Math.random() * 0.6);
+      const lng = MOSCOW_CENTER.lng + RADIUS * Math.sin(newAngle) * (0.7 + Math.random() * 0.6);
+      
+      // Случайное изменение скорости
+      const speedChange = (Math.random() - 0.5) * 10;
+      let newSpeed = Math.max(10, Math.min(120, cargo.speed + speedChange));
+      
+      // Для остановленных или доставленных грузов скорость = 0
+      if (cargo.status === 'stopped' || cargo.status === 'delivered') {
+        newSpeed = 0;
+      }
 
-    // Увеличиваем угол для движения по окружности
-    const newAngle = cargo.angle + 0.02;
-    
-    // Рассчитываем новую позицию
-    const lat = MOSCOW_CENTER.lat + RADIUS * Math.cos(newAngle) * (0.7 + Math.random() * 0.6);
-    const lng = MOSCOW_CENTER.lng + RADIUS * Math.sin(newAngle) * (0.7 + Math.random() * 0.6);
-    
-    // Случайное изменение скорости
-    const speedChange = (Math.random() - 0.5) * 10;
-    const newSpeed = Math.max(10, Math.min(120, cargo.speed + speedChange));
+      // Случайное изменение статуса (с небольшой вероятностью)
+      let newStatus = cargo.status;
+      if (Math.random() < 0.05) {
+        const statuses = ['moving', 'stopped', 'delivered', 'pending'];
+        newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      }
 
-    // Случайное изменение статуса (с небольшой вероятностью)
-    let newStatus = cargo.status;
-    if (Math.random() < 0.05) {
-      const statuses = ['moving', 'stopped', 'delivered', 'pending'];
-      newStatus = statuses[Math.floor(Math.random() * statuses.length)];
-    }
-
-    return {
-      ...cargo,
-      lat: parseFloat(lat.toFixed(6)),
-      lng: parseFloat(lng.toFixed(6)),
-      speed: parseFloat(newSpeed.toFixed(1)),
-      status: newStatus,
-      angle: newAngle
-    };
-  });
-};
+      return {
+        ...cargo,
+        lat: parseFloat(lat.toFixed(6)),
+        lng: parseFloat(lng.toFixed(6)),
+        speed: parseFloat(newSpeed.toFixed(1)),
+        status: newStatus,
+        angle: newAngle
+      };
+    });
+  };
 
 // Отправка данных всем подключенным клиентам
 const broadcastData = () => {

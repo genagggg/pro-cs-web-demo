@@ -22,7 +22,8 @@
     "host/src/**/*",
     "remote-radar/src/**/*", 
     "remote-offers/src/**/*",
-    "types/**/*.d.ts"
+    "types/**/*.d.ts",
+    "**/*.d.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

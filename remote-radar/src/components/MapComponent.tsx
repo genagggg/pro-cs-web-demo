@@ -4,6 +4,7 @@ import L, { LatLngTuple } from 'leaflet';
 import useWebSocket from '../hooks/useWebSocket';
 import useThrottle from '../hooks/useThrottle';
 import { Cargo, WsStatus } from '../types';
+import '../styles/radar.css';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -132,23 +133,36 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
   const initialCargoesSet = useRef(false);
 
   const throttledUpdateCargoes = useThrottle((newCargoes: Cargo[]) => {
+    console.log('WebSocket data received:', newCargoes.length, 'cargoes');
     setCargoes(prevCargoes => {
       if (!initialCargoesSet.current) {
+        console.log('Initial cargoes set:', newCargoes.length);
         initialCargoesSet.current = true;
         return newCargoes;
       }
 
-      return prevCargoes.map(prevCargo => {
+      const updatedCargoes = prevCargoes.map(prevCargo => {
         const newCargo = newCargoes.find(c => c.id === prevCargo.id);
-        if (newCargo &&
-            (newCargo.lat !== prevCargo.lat ||
-             newCargo.lng !== prevCargo.lng ||
-             newCargo.status !== prevCargo.status ||
-             newCargo.speed !== prevCargo.speed)) {
-          return newCargo;
+        if (newCargo) {
+          const latChanged = Math.abs(newCargo.lat - prevCargo.lat) > 0.0001;
+          const lngChanged = Math.abs(newCargo.lng - prevCargo.lng) > 0.0001;
+          const statusChanged = newCargo.status !== prevCargo.status;
+          const speedChanged = Math.abs(newCargo.speed - prevCargo.speed) > 0.1;
+          
+          if (latChanged || lngChanged || statusChanged || speedChanged) {
+            console.log(`Cargo ${newCargo.id} updated:`, {
+              lat: `${prevCargo.lat} → ${newCargo.lat}`,
+              lng: `${prevCargo.lng} → ${newCargo.lng}`,
+              status: `${prevCargo.status} → ${newCargo.status}`,
+              speed: `${prevCargo.speed.toFixed(1)} → ${newCargo.speed.toFixed(1)}`
+            });
+            return newCargo;
+          }
         }
         return prevCargo;
       });
+      
+      return updatedCargoes;
     });
   }, throttlingInterval);
 
