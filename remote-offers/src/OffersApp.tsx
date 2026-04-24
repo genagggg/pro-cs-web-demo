@@ -1,82 +1,151 @@
 import React from 'react';
+import OfferForm from './components/OfferForm';
 
 const OffersApp: React.FC = () => {
   return (
     <div style={{
-      padding: '15px',
-      backgroundColor: '#fff3e0',
+      padding: '20px',
+      backgroundColor: '#f8f9fa',
       borderRadius: '8px',
-
-      border: '2px solid #ff9800'
+      minHeight: '100vh'
     }}>
-      <h2 style={{ color: '#ef6c00', marginTop: '0' }}>Offers Module</h2>
-      <p style={{ fontSize: '16px', marginBottom: '15px' }}>
-        This is the offers micro-frontend running on port 3002.
-      </p>
       <div style={{
-        backgroundColor: '#fff8e1',
-        border: '1px dashed #ff9800',
-        borderRadius: '5px',
-        padding: '15px',
-        marginBottom: '15px'
+        maxWidth: '1200px',
+        margin: '0 auto'
       }}>
-        <h3 style={{ marginTop: '0', color: '#f57c00' }}>Create New Offer</h3>
-        <form>
-          <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Client Name:</label>
-            <input 
-              type="text" 
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                boxSizing: 'border-box'
-              }}
-              placeholder="Enter client name"
-            />
+        <header style={{ marginBottom: '30px' }}>
+          <h1 style={{ 
+            color: '#333', 
+            marginBottom: '10px',
+            fontSize: '28px',
+            fontWeight: '700'
+          }}>
+            Модуль заявок
+          </h1>
+          <p style={{ 
+            fontSize: '16px', 
+            color: '#666',
+            marginBottom: '20px'
+          }}>
+            Создание и управление заявками на перевозку грузов
+          </p>
+        </header>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 350px',
+          gap: '30px',
+          alignItems: 'start'
+        }}>
+          {/* Основная форма */}
+          <div>
+            <OfferForm />
           </div>
-          <div style={{ marginBottom: '10px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Service Type:</label>
-            <select 
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                boxSizing: 'border-box'
-              }}
-            >
-              <option value="express">Express Delivery</option>
-              <option value="standard">Standard Delivery</option>
-              <option value="bulk">Bulk Transport</option>
-              <option value="refrigerated">Refrigerated Transport</option>
-            </select>
+
+          {/* Боковая панель с информацией */}
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '8px',
+            padding: '20px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+            position: 'sticky',
+            top: '20px'
+          }}>
+            <h3 style={{ 
+              color: '#333', 
+              marginTop: '0',
+              marginBottom: '15px',
+              fontSize: '18px',
+              borderBottom: '2px solid #4c6ef5',
+              paddingBottom: '10px'
+            }}>
+              Информация
+            </h3>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <h4 style={{ 
+                color: '#555', 
+                marginBottom: '10px',
+                fontSize: '16px'
+              }}>
+                Правила оформления:
+              </h4>
+              <ul style={{ 
+                paddingLeft: '20px', 
+                margin: '0',
+                fontSize: '14px',
+                color: '#666'
+              }}>
+                <li style={{ marginBottom: '8px' }}>Минимальный вес груза: 0.1 кг</li>
+                <li style={{ marginBottom: '8px' }}>Дата доставки не может быть ранее завтрашнего дня</li>
+                <li style={{ marginBottom: '8px' }}>Для грузов свыше 100 кг доступна опция "Спецтехника"</li>
+                <li style={{ marginBottom: '8px' }}>Все поля обязательны для заполнения</li>
+              </ul>
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <h4 style={{ 
+                color: '#555', 
+                marginBottom: '10px',
+                fontSize: '16px'
+              }}>
+                Статистика:
+              </h4>
+              <div style={{ 
+                backgroundColor: '#f8f9fa',
+                borderRadius: '6px',
+                padding: '15px'
+              }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  marginBottom: '10px'
+                }}>
+                  <span style={{ color: '#666' }}>Всего заявок:</span>
+                  <span style={{ fontWeight: '600', color: '#333' }}>42</span>
+                </div>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  marginBottom: '10px'
+                }}>
+                  <span style={{ color: '#666' }}>В обработке:</span>
+                  <span style={{ fontWeight: '600', color: '#ff9800' }}>12</span>
+                </div>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between'
+                }}>
+                  <span style={{ color: '#666' }}>Завершено:</span>
+                  <span style={{ fontWeight: '600', color: '#4caf50' }}>30</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 style={{ 
+                color: '#555', 
+                marginBottom: '10px',
+                fontSize: '16px'
+              }}>
+                Контакты поддержки:
+              </h4>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666',
+                marginBottom: '5px'
+              }}>
+                📧 support@logistics.ru
+              </p>
+              <p style={{ 
+                fontSize: '14px', 
+                color: '#666'
+              }}>
+                📞 +7 (495) 123-45-67
+              </p>
+            </div>
           </div>
-          <button 
-            type="button" 
-            style={{
-              backgroundColor: '#ff9800',
-              color: 'white',
-              padding: '10px 20px',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            Create Offer
-          </button>
-        </form>
-      </div>
-      <div>
-        <h3 style={{ color: '#f57c00' }}>Features:</h3>
-        <ul style={{ paddingLeft: '20px' }}>
-          <li>Dynamic pricing calculation</li>
-          <li>Contract management</li>
-          <li>Client portal integration</li>
-          <li>Automated quote generation</li>
-        </ul>
+        </div>
       </div>
     </div>
   );
