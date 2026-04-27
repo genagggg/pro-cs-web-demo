@@ -1,10 +1,16 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import L, { LatLngTuple } from 'leaflet';
 import useWebSocket from '../hooks/useWebSocket';
 import useThrottle from '../hooks/useThrottle';
 import { Cargo, WsStatus } from '../types';
-import '../styles/radar.css';
+import MemoizedCargoMarker from './MemoizedCargoMarker';
+import VirtualizedCargoList from './VirtualizedCargoList';
+import FPSDisplay from './FPSDisplay';
+import generateEmulatedCargoes from '../generateEmulatedCargoes';
+import * as stylesRaw from '../styles/radar.module.css';
+const styles = stylesRaw.default && typeof stylesRaw.default === 'object' ? stylesRaw.default : stylesRaw as any;
+import '../styles/leaflet-overrides.css';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -13,156 +19,79 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-const STATUS_ICONS: Record<Cargo['status'], L.Icon> = {
-  moving: new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-  stopped: new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-  delivered: new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-  pending: new L.Icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-};
-
-const getStatusText = (status: Cargo['status']): string => {
-  switch (status) {
-    case 'moving': return 'В движении';
-    case 'stopped': return 'Остановлен';
-    case 'delivered': return 'Доставлен';
-    case 'pending': return 'Ожидает';
-    default: return 'Неизвестно';
-  }
-};
-
-interface CargoMarkersProps {
-  cargoes: Cargo[];
-  onCargoClick: (cargo: Cargo) => void;
-  selectedCargoId: string | null;
-}
-
-const CargoMarkers: React.FC<CargoMarkersProps> = React.memo(({ cargoes, onCargoClick }) => {
-  return (
-    <>
-      {cargoes.map(cargo => (
-        <Marker
-          key={cargo.id}
-          position={[cargo.lat, cargo.lng] as LatLngTuple}
-          icon={STATUS_ICONS[cargo.status]}
-          eventHandlers={{
-            click: () => onCargoClick(cargo)
-          }}
-        >
-          <Popup>
-            <div style={{ minWidth: '200px' }}>
-              <h4 style={{ margin: '0 0 8px 0' }}>{cargo.name}</h4>
-              <p style={{ margin: '4px 0' }}><strong>ID:</strong> {cargo.id}</p>
-              <p style={{ margin: '4px 0' }}><strong>Статус:</strong> {getStatusText(cargo.status)}</p>
-              <p style={{ margin: '4px 0' }}><strong>Скорость:</strong> {cargo.speed.toFixed(1)} км/ч</p>
-              <p style={{ margin: '4px 0' }}>
-                <strong>Координаты:</strong> {cargo.lat.toFixed(4)}, {cargo.lng.toFixed(4)}
-              </p>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-    </>
-  );
-});
-
-interface CargoListProps {
-  cargoes: Cargo[];
-  selectedCargoId: string | null;
-  onSelectCargo: (cargo: Cargo) => void;
-}
-
-const CargoList: React.FC<CargoListProps> = ({ cargoes, selectedCargoId, onSelectCargo }) => {
-  return (
-    <div className="radar-cargo-list">
-      <h3>Грузы ({cargoes.length})</h3>
-      <ul>
-        {cargoes.map(cargo => (
-          <li
-            key={cargo.id}
-            onClick={() => onSelectCargo(cargo)}
-            className={`radar-cargo-item ${selectedCargoId === cargo.id ? 'selected' : ''} status-${cargo.status}`}
-          >
-            <span className="cargo-name">{cargo.name}</span>
-            <span className="cargo-details">
-              {getStatusText(cargo.status)} · {cargo.speed.toFixed(1)} км/ч
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
 interface MapComponentProps {
   throttlingInterval?: number;
 }
+
+const MapResizeHandler: React.FC = () => {
+  const map = useMap();
+
+  useEffect(() => {
+    const invalidate = () => {
+      try {
+        map.invalidateSize();
+      } catch (error) {
+        console.warn('Error invalidating map size:', error);
+      }
+    };
+
+    const timers = [100, 300, 700, 1500].map(
+      delay => setTimeout(invalidate, delay)
+    );
+
+    const container = map.getContainer();
+    let rafId: number;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(invalidate);
+    });
+    
+    if (container) {
+      ro.observe(container);
+    }
+
+    invalidate();
+
+    return () => {
+      timers.forEach(clearTimeout);
+      cancelAnimationFrame(rafId);
+      ro.disconnect();
+    };
+  }, [map]);
+
+  return null;
+};
 
 const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 }) => {
   const [cargoes, setCargoes] = useState<Cargo[]>([]);
   const [selectedCargoId, setSelectedCargoId] = useState<string | null>(null);
   const [wsStatus, setWsStatus] = useState<WsStatus>('connecting');
   const [mapReady, setMapReady] = useState(false);
+  const [mobileListOpen, setMobileListOpen] = useState(false);
+  const [tileError, setTileError] = useState(false);
   const initialCargoesSet = useRef(false);
 
   const throttledUpdateCargoes = useThrottle((newCargoes: Cargo[]) => {
-    console.log('WebSocket data received:', newCargoes.length, 'cargoes');
     setCargoes(prevCargoes => {
       if (!initialCargoesSet.current) {
-        console.log('Initial cargoes set:', newCargoes.length);
         initialCargoesSet.current = true;
         return newCargoes;
       }
 
-      const updatedCargoes = prevCargoes.map(prevCargo => {
+      return prevCargoes.map(prevCargo => {
         const newCargo = newCargoes.find(c => c.id === prevCargo.id);
         if (newCargo) {
           const latChanged = Math.abs(newCargo.lat - prevCargo.lat) > 0.0001;
           const lngChanged = Math.abs(newCargo.lng - prevCargo.lng) > 0.0001;
           const statusChanged = newCargo.status !== prevCargo.status;
           const speedChanged = Math.abs(newCargo.speed - prevCargo.speed) > 0.1;
-          
+
           if (latChanged || lngChanged || statusChanged || speedChanged) {
-            console.log(`Cargo ${newCargo.id} updated:`, {
-              lat: `${prevCargo.lat} → ${newCargo.lat}`,
-              lng: `${prevCargo.lng} → ${newCargo.lng}`,
-              status: `${prevCargo.status} → ${newCargo.status}`,
-              speed: `${prevCargo.speed.toFixed(1)} → ${newCargo.speed.toFixed(1)}`
-            });
             return newCargo;
           }
         }
         return prevCargo;
       });
-      
-      return updatedCargoes;
     });
   }, throttlingInterval);
 
@@ -175,12 +104,19 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
     onStatusChange: setWsStatus,
   });
 
-  const handleCargoClick = useCallback((cargo: Cargo) => {
-    setSelectedCargoId(cargo.id);
+  const handleMarkerClick = useCallback((id: string) => {
+    setSelectedCargoId(id);
   }, []);
 
   const handleSelectCargo = useCallback((cargo: Cargo) => {
     setSelectedCargoId(cargo.id);
+    setMobileListOpen(false);
+  }, []);
+
+  const handleEmulate500 = useCallback(() => {
+    const emulated = generateEmulatedCargoes(500);
+    setCargoes(emulated);
+    initialCargoesSet.current = true;
   }, []);
 
   const moscowCenter: LatLngTuple = [55.7558, 37.6173];
@@ -188,41 +124,95 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
   useEffect(() => {
     const timer = setTimeout(() => {
       setMapReady(true);
-    }, 100);
+    }, 300);
+    
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!mapReady) return;
+    
+    const resizeTimer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 500);
+    
+    return () => clearTimeout(resizeTimer);
+  }, [mapReady]);
+
   return (
-    <div className="radar-container">
-      <div className="radar-status-indicator">
-        <div className={`status-dot ${wsStatus}`} />
-        <span className="status-text">
+    <div className={styles.radarContainer}>
+      <FPSDisplay />
+
+      <div className={styles.statusIndicator}>
+        <div className={`${styles.statusDot} ${wsStatus}`} />
+        <span className={styles.statusText}>
           {wsStatus === 'connected' ? 'Подключено' :
            wsStatus === 'connecting' ? 'Подключение...' : 'Отключено'}
         </span>
       </div>
+
+      <button
+        className={styles.emulateBtn}
+        onClick={handleEmulate500}
+      >
+        Эмулировать 500 грузов
+      </button>
+
+      <button
+        className={styles.mobileListBtn}
+        onClick={() => setMobileListOpen(prev => !prev)}
+      >
+        {mobileListOpen ? '✕' : `Грузы (${cargoes.length})`}
+      </button>
 
       {mapReady ? (
         <MapContainer
           center={moscowCenter}
           zoom={11}
           className="leaflet-container"
-          style={{ height: '100vh', width: '100%' }}
         >
+          <MapResizeHandler />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maxZoom={19}
+            minZoom={1}
+            eventHandlers={{
+              error: () => {
+                console.warn('OpenStreetMap tiles failed to load');
+                setTileError(true);
+              }
+            }}
           />
-          <CargoMarkers
-            cargoes={cargoes}
-            onCargoClick={handleCargoClick}
-            selectedCargoId={selectedCargoId}
+          <TileLayer
+            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+            maxZoom={20}
+            minZoom={1}
+            className="fallback-tile"
+            eventHandlers={{
+              load: () => {
+                if (tileError) {
+                  console.log('Fallback tiles loaded successfully');
+                }
+              }
+            }}
           />
+          {cargoes.map(cargo => (
+            <MemoizedCargoMarker
+              key={cargo.id}
+              id={cargo.id}
+              lat={cargo.lat}
+              lng={cargo.lng}
+              name={cargo.name}
+              status={cargo.status}
+              speed={cargo.speed}
+              onClick={handleMarkerClick}
+            />
+          ))}
         </MapContainer>
       ) : (
         <div className="leaflet-container" style={{
-          height: '100vh',
-          width: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -234,11 +224,13 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
         </div>
       )}
 
-      <CargoList
-        cargoes={cargoes}
-        selectedCargoId={selectedCargoId}
-        onSelectCargo={handleSelectCargo}
-      />
+      <div className={`${styles.cargoPanel} ${mobileListOpen ? styles.mobileOpen : ''}`}>
+        <VirtualizedCargoList
+          cargoes={cargoes}
+          selectedCargoId={selectedCargoId}
+          onSelectCargo={handleSelectCargo}
+        />
+      </div>
     </div>
   );
 };

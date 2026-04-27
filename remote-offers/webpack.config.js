@@ -9,6 +9,7 @@ module.exports = (env, argv) => {
   
   return {
     entry: './src/index.ts',
+    devtool: 'eval-source-map',
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: isProduction ? '[name].[contenthash].js' : '[name].js',
@@ -20,9 +21,10 @@ module.exports = (env, argv) => {
       historyApiFallback: true,
       hot: true,
       headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-        'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+        'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+        'Access-Control-Allow-Credentials': 'true'
       }
     },
     resolve: {

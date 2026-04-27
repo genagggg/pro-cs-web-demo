@@ -1,10 +1,56 @@
-import React, { Suspense, lazy, useState } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { PrivilegesProvider, usePrivileges, PRIVILEGES, ROLES, ProtectedContent } from './contexts/PrivilegesContext';
 import RoutesTable from './components/RoutesTable';
+import './styles.css';
 
-// Lazy load remote modules
 const RadarApp = lazy(() => import('radar/RadarApp'));
 const OffersApp = lazy(() => import('offers/OffersApp'));
+
+const useLocalFPS = (): number => {
+  const [fps, setFps] = useState(0);
+  const framesRef = useRef(0);
+  const lastTimeRef = useRef(performance.now());
+  const rafRef = useRef<number>();
+
+  useEffect(() => {
+    const tick = (now: number) => {
+      framesRef.current++;
+      const delta = now - lastTimeRef.current;
+      if (delta >= 1000) {
+        const currentFps = Math.round((framesRef.current * 1000) / delta);
+        setFps(currentFps);
+        framesRef.current = 0;
+        lastTimeRef.current = now;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current !== undefined) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  return fps;
+};
+
+const LocalFPSDisplay: React.FC = () => {
+  const fps = useLocalFPS();
+  const getColor = () => {
+    if (fps >= 50) return '#4caf50';
+    if (fps >= 30) return '#ff9800';
+    return '#f44336';
+  };
+  return (
+    <div style={{
+      position: 'fixed', bottom: 12, right: 12, zIndex: 10000,
+      backgroundColor: 'rgba(0,0,0,0.75)', color: '#fff',
+      padding: '4px 10px', borderRadius: 6, fontFamily: 'monospace',
+      fontSize: 13, lineHeight: 1.4, pointerEvents: 'none', userSelect: 'none',
+    }}>
+      <span style={{ color: getColor(), fontWeight: 700 }}>{fps}</span> FPS
+    </div>
+  );
+};
 
 // Компонент переключателя ролей
 const RoleSwitcher: React.FC = () => {
@@ -208,7 +254,8 @@ const AppContent: React.FC = () => {
           borderRadius: '12px',
           padding: '30px',
           boxShadow: '0 2px 15px rgba(0, 0, 0, 0.08)',
-          marginBottom: '30px'
+          marginBottom: '30px',
+          overflow: 'visible'
         }}>
           <h2 style={{ 
             color: '#333', 
@@ -314,6 +361,7 @@ const App: React.FC = () => {
   return (
     <PrivilegesProvider>
       <AppContent />
+      <LocalFPSDisplay />
     </PrivilegesProvider>
   );
 };

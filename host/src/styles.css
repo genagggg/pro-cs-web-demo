@@ -1,0 +1,32 @@
+/* Base styles for host application */
+
+/* Ensure radar container has proper dimensions */
+.radar-container {
+  width: 100%;
+  height: 600px;
+  position: relative;
+  background-color: #f0f2f5;
+}
+
+/* Leaflet map container styles */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+/* Fix for leaflet tiles loading */
+.leaflet-tile {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure map tiles are loaded properly */
+.leaflet-tile-loaded {
+  opacity: 1 !important;
+}

@@ -3,7 +3,7 @@ import MapComponent from './components/MapComponent';
 
 const RadarApp: React.FC = () => {
   return (
-    <div style={{ width: '100%', height: '100vh' }}>
+    <div style={{ width: '100%' }}>
       <MapComponent throttlingInterval={500} />
     </div>
   );

@@ -20,9 +20,10 @@ module.exports = (env, argv) => {
       historyApiFallback: true,
       hot: true,
       headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-        'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+        'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+        'Access-Control-Allow-Credentials': 'true'
       }
     },
     resolve: {
@@ -41,8 +42,26 @@ module.exports = (env, argv) => {
           }
         },
         {
+          test: /\.module\.css$/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: {
+                  localIdentName: '[name]__[local]--[hash:base64:5]',
+                  exportOnlyLocals: false,
+                  namedExport: false,
+                  exportLocalsConvention: 'as-is',
+                },
+              },
+            },
+          ],
+        },
+        {
           test: /\.css$/,
-          use: ['style-loader', 'css-loader']
+          exclude: /\.module\.css$/,
+          use: ['style-loader', 'css-loader'],
         },
         {
           test: /\.(png|jpg|jpeg|gif|svg)$/,
@@ -57,7 +76,9 @@ module.exports = (env, argv) => {
         filename: 'remoteEntry.js',
         exposes: {
           './RadarApp': './src/RadarApp.tsx',
-          './bootstrap': './src/bootstrap.tsx'
+          './bootstrap': './src/bootstrap.tsx',
+          './FPSDisplay': './src/components/FPSDisplay.tsx',
+          './useFPS': './src/hooks/useFPS.ts'
         },
         shared: {
           react: {

@@ -5,7 +5,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import App from './App';
 
 const store = configureStore({
-  reducer: {},
+  reducer: {
+    _placeholder: (_state = {}) => _state,
+  },
 });
 
 const root = ReactDOM.createRoot(
