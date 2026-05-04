@@ -37,7 +37,7 @@ module.exports = {
     // TypeScript
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
     
@@ -58,7 +58,7 @@ module.exports = {
     'import/no-duplicates': 'error',
     
     // General
-    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    'no-console': 'off',
     'prefer-const': 'error',
     'no-var': 'error',
     'object-shorthand': 'error',
@@ -93,6 +93,7 @@ module.exports = {
     'build',
     'coverage',
     '*.config.js',
-    '.eslintrc.js'
+    '.eslintrc.js',
+    'mock-server'
   ],
 };

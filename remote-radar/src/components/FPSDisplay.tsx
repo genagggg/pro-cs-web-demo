@@ -1,4 +1,5 @@
 import React from 'react';
+
 import useFPS from '../hooks/useFPS';
 
 const FPSDisplay: React.FC = () => {

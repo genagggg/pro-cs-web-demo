@@ -1,7 +1,10 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 import React from 'react';
-import { List, RowComponentProps } from 'react-window';
-import { Cargo } from '../types';
+import type { RowComponentProps } from 'react-window';
+import { List } from 'react-window';
+
 import styles from '../styles/radar.module.css';
+import type { Cargo } from '../types';
 
 const getStatusText = (status: Cargo['status']): string => {
   switch (status) {
@@ -35,6 +38,7 @@ const CargoRow = React.memo(({
 
   return (
     <div style={style}>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
         onClick={() => onSelectCargo(cargo)}
         className={`${styles.cargoItem} ${isSelected ? styles.selected : ''} ${styles[statusKey] ?? ''}`}

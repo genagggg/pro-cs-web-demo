@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { Cargo, WsStatus } from '../types';
+
+import type { Cargo, WsStatus } from '../types';
 
 const WS_URL = process.env.WS_URL || 'ws://localhost:3003';
 const API_URL = process.env.API_URL || 'http://localhost:3003/api/radar/cargoes';

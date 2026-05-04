@@ -1,6 +1,6 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 // Схема валидации с Zod
@@ -87,7 +87,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Тип груза */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ 
+          <label htmlFor="cargoType" style={{ 
             display: 'block', 
             marginBottom: '8px', 
             fontWeight: '600',
@@ -129,7 +129,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Вес */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ 
+          <label htmlFor="weight" style={{ 
             display: 'block', 
             marginBottom: '8px', 
             fontWeight: '600',
@@ -169,7 +169,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Дата доставки */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ 
+          <label htmlFor="deliveryDate" style={{ 
             display: 'block', 
             marginBottom: '8px', 
             fontWeight: '600',
@@ -206,7 +206,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Адрес */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ 
+          <label htmlFor="address" style={{ 
             display: 'block', 
             marginBottom: '8px', 
             fontWeight: '600',
@@ -244,7 +244,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Контрагент */}
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ 
+          <label htmlFor="counterparty" style={{ 
             display: 'block', 
             marginBottom: '8px', 
             fontWeight: '600',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
-import { PrivilegesProvider, usePrivileges, PRIVILEGES, ROLES, ProtectedContent } from './contexts/PrivilegesContext';
+
 import RoutesTable from './components/RoutesTable';
+import { PrivilegesProvider, usePrivileges, PRIVILEGES, ROLES, ProtectedContent } from './contexts/PrivilegesContext';
 import './styles.css';
 
 const RadarApp = lazy(() => import('radar/RadarApp'));
@@ -297,7 +298,7 @@ const AppContent: React.FC = () => {
               borderRadius: '8px'
             }}>
               <div style={{ fontSize: '12px', color: '#2e7d32', marginBottom: '5px' }}>
-                Модуль "Радар"
+                Модуль &laquo;Радар&raquo;
               </div>
               <div style={{ fontSize: '18px', fontWeight: '700', color: '#333' }}>
                 Активные грузы: 20
@@ -309,7 +310,7 @@ const AppContent: React.FC = () => {
               borderRadius: '8px'
             }}>
               <div style={{ fontSize: '12px', color: '#1565c0', marginBottom: '5px' }}>
-                Модуль "Заявки"
+                Модуль &laquo;Заявки&raquo;
               </div>
               <div style={{ fontSize: '18px', fontWeight: '700', color: '#333' }}>
                 Заявок в работе: 12
@@ -321,7 +322,7 @@ const AppContent: React.FC = () => {
               borderRadius: '8px'
             }}>
               <div style={{ fontSize: '12px', color: '#7b1fa2', marginBottom: '5px' }}>
-                Модуль "Маршруты"
+                Модуль &laquo;Маршруты&raquo;
               </div>
               <div style={{ fontSize: '18px', fontWeight: '700', color: '#333' }}>
                 Активных маршрутов: 5

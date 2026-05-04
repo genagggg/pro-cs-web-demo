@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
 import OffersApp from './OffersApp';
 
 const root = ReactDOM.createRoot(

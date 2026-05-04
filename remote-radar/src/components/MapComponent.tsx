@@ -1,14 +1,16 @@
+import type { LatLngTuple } from 'leaflet';
+import L from 'leaflet';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
-import L, { LatLngTuple } from 'leaflet';
-import useWebSocket from '../hooks/useWebSocket';
+
+import generateEmulatedCargoes from '../generateEmulatedCargoes';
+import FPSDisplay from './FPSDisplay';
 import useThrottle from '../hooks/useThrottle';
-import { Cargo, WsStatus } from '../types';
+import useWebSocket from '../hooks/useWebSocket';
+import * as stylesRaw from '../styles/radar.module.css';
+import type { Cargo, WsStatus } from '../types';
 import MemoizedCargoMarker from './MemoizedCargoMarker';
 import VirtualizedCargoList from './VirtualizedCargoList';
-import FPSDisplay from './FPSDisplay';
-import generateEmulatedCargoes from '../generateEmulatedCargoes';
-import * as stylesRaw from '../styles/radar.module.css';
 const styles = stylesRaw.default && typeof stylesRaw.default === 'object' ? stylesRaw.default : stylesRaw as any;
 import '../styles/leaflet-overrides.css';
 

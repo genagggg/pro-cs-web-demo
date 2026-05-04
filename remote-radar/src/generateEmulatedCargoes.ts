@@ -1,4 +1,4 @@
-import { Cargo } from './types';
+import type { Cargo } from './types';
 
 const MOSCOW_CENTER = { lat: 55.7558, lng: 37.6173 };
 const SPREAD = 0.15;

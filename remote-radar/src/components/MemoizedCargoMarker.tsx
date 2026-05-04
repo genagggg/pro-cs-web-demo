@@ -1,7 +1,9 @@
+import type { LatLngTuple } from 'leaflet';
+import L from 'leaflet';
 import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
-import L, { LatLngTuple } from 'leaflet';
-import { Cargo } from '../types';
+
+import type { Cargo } from '../types';
 
 const STATUS_ICONS: Record<Cargo['status'], L.Icon> = {
   moving: new L.Icon({

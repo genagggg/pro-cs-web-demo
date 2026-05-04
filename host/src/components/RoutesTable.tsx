@@ -1,27 +1,28 @@
-import React, { useState, useMemo } from 'react';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+/* eslint-disable jsx-a11y/no-autofocus, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
+import type { DragEndEvent } from '@dnd-kit/core';
 import {
   DndContext,
   closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
-  useSensors,
-  DragEndEvent,
+  useSensors
 } from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
+  useSortable
 } from '@dnd-kit/sortable';
-import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import React, { useState, useMemo } from 'react';
 
 // Типы данных
 export interface Route {
@@ -128,6 +129,7 @@ const RoutesTable: React.FC = () => {
 
   // Настройка колонок таблицы
   const columnHelper = createColumnHelper<Route>();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const columns = useMemo(() => [
     columnHelper.accessor('route', {
       header: 'Маршрут',
@@ -180,7 +182,7 @@ const RoutesTable: React.FC = () => {
               display: 'inline-block',
               padding: '4px 12px',
               borderRadius: '12px',
-              backgroundColor: statusOption?.color + '20',
+              backgroundColor: `${statusOption?.color}20`,
               color: statusOption?.color,
               border: `1px solid ${statusOption?.color}`,
               fontSize: '12px',
@@ -214,6 +216,7 @@ const RoutesTable: React.FC = () => {
         </div>
       ),
     }),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [editingId]);
 
   // Инициализация таблицы

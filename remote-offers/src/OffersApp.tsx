@@ -1,4 +1,5 @@
 import React from 'react';
+
 import OfferForm from './components/OfferForm';
 
 const OffersApp: React.FC = () => {
@@ -78,7 +79,7 @@ const OffersApp: React.FC = () => {
               }}>
                 <li style={{ marginBottom: '8px' }}>Минимальный вес груза: 0.1 кг</li>
                 <li style={{ marginBottom: '8px' }}>Дата доставки не может быть ранее завтрашнего дня</li>
-                <li style={{ marginBottom: '8px' }}>Для грузов свыше 100 кг доступна опция "Спецтехника"</li>
+                <li style={{ marginBottom: '8px' }}>Для грузов свыше 100 кг доступна опция &laquo;Спецтехника&raquo;</li>
                 <li style={{ marginBottom: '8px' }}>Все поля обязательны для заполнения</li>
               </ul>
             </div>
