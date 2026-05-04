@@ -36,7 +36,8 @@ module.exports = (env, argv) => {
           use: {
             loader: 'ts-loader',
             options: {
-              configFile: path.resolve(__dirname, '../tsconfig.json')
+              configFile: path.resolve(__dirname, '../tsconfig.json'),
+              transpileOnly: true
             }
           }
         },
