@@ -1,0 +1,7 @@
+{
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "installCommand": "cd .. && npm ci",
+  "framework": "node-server",
+  "regions": ["iad1"]
+}

@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm run build --workspace=remote-radar",
+  "outputDirectory": "dist",
+  "installCommand": "cd .. && npm ci",
+  "framework": "webpack",
+  "regions": ["iad1"]
+}

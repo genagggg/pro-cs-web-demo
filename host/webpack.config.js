@@ -1,12 +1,13 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
-  
+  const radarUrl = process.env.RADAR_URL || 'http://localhost:3001';
+  const offersUrl = process.env.OFFERS_URL || 'http://localhost:3002';
+
   return {
     entry: './src/index.tsx',
     output: {
@@ -52,8 +53,8 @@ module.exports = (env, argv) => {
       new ModuleFederationPlugin({
         name: 'host',
         remotes: {
-          radar: `radar@http://localhost:3001/remoteEntry.js`,
-          offers: `offers@http://localhost:3002/remoteEntry.js`
+          radar: `radar@${radarUrl}/remoteEntry.js`,
+          offers: `offers@${offersUrl}/remoteEntry.js`
         },
         shared: {
           react: {
