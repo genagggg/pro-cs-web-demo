@@ -13,7 +13,7 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist'),
       filename: isProduction ? '[name].[contenthash].js' : '[name].js',
       publicPath: 'auto',
-      clean: true
+      clean: true,
     },
     devServer: {
       port: 3002,
@@ -23,8 +23,8 @@ module.exports = (env, argv) => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
         'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
-        'Access-Control-Allow-Credentials': 'true'
-      }
+        'Access-Control-Allow-Credentials': 'true',
+      },
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.jsx'],
@@ -38,15 +38,15 @@ module.exports = (env, argv) => {
             loader: 'ts-loader',
             options: {
               configFile: path.resolve(__dirname, '../tsconfig.json'),
-              transpileOnly: true
-            }
-          }
+              transpileOnly: true,
+            },
+          },
         },
         {
           test: /\.css$/,
-          use: ['style-loader', 'css-loader']
-        }
-      ]
+          use: ['style-loader', 'css-loader'],
+        },
+      ],
     },
     plugins: [
       new Dotenv(),
@@ -55,30 +55,30 @@ module.exports = (env, argv) => {
         filename: 'remoteEntry.js',
         exposes: {
           './OffersApp': './src/OffersApp.tsx',
-          './bootstrap': './src/bootstrap.tsx'
+          './bootstrap': './src/bootstrap.tsx',
         },
         shared: {
           react: {
             singleton: true,
-            requiredVersion: '^18.2.0'
+            requiredVersion: '^18.2.0',
           },
           'react-dom': {
             singleton: true,
-            requiredVersion: '^18.2.0'
+            requiredVersion: '^18.2.0',
           },
           'react-redux': {
             singleton: true,
-            requiredVersion: '^9.0.4'
+            requiredVersion: '^9.0.4',
           },
           '@reduxjs/toolkit': {
             singleton: true,
-            requiredVersion: '^2.0.1'
-          }
-        }
+            requiredVersion: '^2.0.1',
+          },
+        },
       }),
       new HtmlWebpackPlugin({
-        template: './public/index.html'
-      })
-    ]
+        template: './public/index.html',
+      }),
+    ],
   };
 };

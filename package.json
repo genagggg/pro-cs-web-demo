@@ -5,7 +5,7 @@
   "private": true,
   "workspaces": [
     "host",
-    "remote-radar", 
+    "remote-radar",
     "remote-offers",
     "mock-server"
   ],

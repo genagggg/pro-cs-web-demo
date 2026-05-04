@@ -19,7 +19,12 @@ module.exports = {
     },
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: ['./tsconfig.json', './host/tsconfig.json', './remote-radar/tsconfig.json', './remote-offers/tsconfig.json'],
+    project: [
+      './tsconfig.json',
+      './host/tsconfig.json',
+      './remote-radar/tsconfig.json',
+      './remote-offers/tsconfig.json',
+    ],
   },
   plugins: ['react', '@typescript-eslint', 'import', 'prettier'],
   settings: {
@@ -40,12 +45,12 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
-    
+
     // React
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'react/jsx-uses-react': 'off',
-    
+
     // Import/Export
     'import/order': [
       'error',
@@ -56,7 +61,7 @@ module.exports = {
       },
     ],
     'import/no-duplicates': 'error',
-    
+
     // General
     'no-console': 'off',
     'prefer-const': 'error',
@@ -64,7 +69,7 @@ module.exports = {
     'object-shorthand': 'error',
     'prefer-arrow-callback': 'error',
     'prefer-template': 'error',
-    'eqeqeq': ['error', 'always'],
+    eqeqeq: ['error', 'always'],
   },
   overrides: [
     {
@@ -94,6 +99,6 @@ module.exports = {
     'coverage',
     '*.config.js',
     '.eslintrc.js',
-    'mock-server'
+    'mock-server',
   ],
 };

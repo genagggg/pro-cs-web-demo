@@ -4,23 +4,26 @@ const useThrottle = <T extends any[]>(callback: (...args: T) => void, delay: num
   const lastCall = useRef(0);
   const timeoutRef = useRef<number>();
 
-  return useCallback((...args: T) => {
-    const now = Date.now();
+  return useCallback(
+    (...args: T) => {
+      const now = Date.now();
 
-    if (lastCall.current && now < lastCall.current + delay) {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (lastCall.current && now < lastCall.current + delay) {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
 
-      timeoutRef.current = window.setTimeout(() => {
+        timeoutRef.current = window.setTimeout(() => {
+          lastCall.current = now;
+          callback(...args);
+        }, delay);
+      } else {
         lastCall.current = now;
         callback(...args);
-      }, delay);
-    } else {
-      lastCall.current = now;
-      callback(...args);
-    }
-  }, [callback, delay]);
+      }
+    },
+    [callback, delay]
+  );
 };
 
 export default useThrottle;

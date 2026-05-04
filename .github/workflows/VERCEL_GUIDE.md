@@ -1,7 +1,9 @@
 # Vercel Configuration Guide for Module Federation Project
 
 ## Overview
+
 This project uses Module Federation with multiple applications:
+
 - `host` - Main application (port 3000)
 - `remote-radar` - Radar micro-frontend (port 3001)
 - `remote-offers` - Offers micro-frontend (port 3002)
@@ -10,9 +12,11 @@ This project uses Module Federation with multiple applications:
 ## Deployment Strategy
 
 ### Option 1: Single Vercel Project (Recommended)
+
 Deploy only the `host` application to Vercel. Remote modules will be loaded dynamically from the same deployment.
 
 **Steps:**
+
 1. Connect your GitHub repository to Vercel
 2. Configure build settings:
    - **Root Directory**: `host`
@@ -22,9 +26,11 @@ Deploy only the `host` application to Vercel. Remote modules will be loaded dyna
 3. Set environment variables if needed
 
 ### Option 2: Multiple Vercel Projects
+
 Deploy each micro-frontend as separate Vercel projects (more complex but allows independent deployments).
 
 ### Option 3: Custom Server (Advanced)
+
 Use a custom Node.js server on Vercel to serve all applications.
 
 ## Required GitHub Secrets
@@ -33,7 +39,6 @@ Add these secrets to your GitHub repository settings:
 
 1. **`VERCEL_TOKEN`** - Vercel API token
    - Generate at: https://vercel.com/account/tokens
-   
 2. **`VERCEL_ORG_ID`** - Your Vercel organization ID
    - Find in Vercel dashboard URL or API
 
@@ -43,6 +48,7 @@ Add these secrets to your GitHub repository settings:
 ## Configuration Files
 
 ### `vercel.json` (for host deployment)
+
 ```json
 {
   "buildCommand": "npm run build",
@@ -65,7 +71,9 @@ Add these secrets to your GitHub repository settings:
 ```
 
 ### Environment Variables for Production
+
 Set these in Vercel project settings:
+
 - `NODE_ENV`: production
 - `PUBLIC_URL`: Your Vercel deployment URL
 - Any API endpoints needed
@@ -73,6 +81,7 @@ Set these in Vercel project settings:
 ## Module Federation Configuration
 
 The `host` application loads remote modules from:
+
 - `remote-radar`: Loaded from same origin (relative URLs work)
 - `remote-offers`: Loaded from same origin
 
@@ -93,15 +102,18 @@ In production: Modules load from same domain with different paths
 ## Troubleshooting
 
 ### Module Loading Issues
+
 - Check browser console for 404 errors
 - Verify remote module paths are correct in `webpack.config.js`
 - Ensure all built files are in `dist` directories
 
 ### CORS Issues
+
 - All modules should be served from same origin
 - If using separate deployments, configure CORS headers
 
 ### Build Failures
+
 - Check Node.js version (requires >= 18)
 - Verify all dependencies are installed
 - Check TypeScript compilation errors

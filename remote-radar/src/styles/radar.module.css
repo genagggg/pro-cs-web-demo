@@ -179,9 +179,15 @@
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 768px) {
@@ -196,11 +202,11 @@
     pointer-events: none;
   }
 
-.cargoPanel.mobileOpen,
-.mobileOpen {
-  transform: translateX(0);
-  pointer-events: auto;
-}
+  .cargoPanel.mobileOpen,
+  .mobileOpen {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
 
   .cargoPanel .cargoList {
     width: 100%;

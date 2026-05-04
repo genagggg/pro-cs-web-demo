@@ -5,23 +5,23 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export const PRIVILEGES = {
   RADAR: 'radar',
   OFFERS: 'offers',
-  ROUTES: 'routes'
+  ROUTES: 'routes',
 } as const;
 
-export type Privilege = typeof PRIVILEGES[keyof typeof PRIVILEGES];
+export type Privilege = (typeof PRIVILEGES)[keyof typeof PRIVILEGES];
 
 // Роли и их привилегии
 export const ROLES = {
   ADMIN: 'admin',
-  LOGIST: 'logist'
+  LOGIST: 'logist',
 } as const;
 
-export type Role = typeof ROLES[keyof typeof ROLES];
+export type Role = (typeof ROLES)[keyof typeof ROLES];
 
 // Привилегии для каждой роли
 const ROLE_PRIVILEGES: Record<Role, Privilege[]> = {
   [ROLES.ADMIN]: [PRIVILEGES.RADAR, PRIVILEGES.OFFERS, PRIVILEGES.ROUTES],
-  [ROLES.LOGIST]: [PRIVILEGES.RADAR]
+  [ROLES.LOGIST]: [PRIVILEGES.RADAR],
 };
 
 interface PrivilegesContextType {
@@ -82,14 +82,10 @@ export const PrivilegesProvider: React.FC<PrivilegesProviderProps> = ({ children
     role,
     privileges,
     setRole,
-    hasPrivilege
+    hasPrivilege,
   };
 
-  return (
-    <PrivilegesContext.Provider value={value}>
-      {children}
-    </PrivilegesContext.Provider>
-  );
+  return <PrivilegesContext.Provider value={value}>{children}</PrivilegesContext.Provider>;
 };
 
 // Хук для использования контекста
@@ -108,16 +104,16 @@ interface ProtectedContentProps {
   fallback?: ReactNode;
 }
 
-export const ProtectedContent: React.FC<ProtectedContentProps> = ({ 
-  privilege, 
-  children, 
-  fallback = null 
+export const ProtectedContent: React.FC<ProtectedContentProps> = ({
+  privilege,
+  children,
+  fallback = null,
 }) => {
   const { hasPrivilege } = usePrivileges();
-  
+
   if (!hasPrivilege(privilege)) {
     return <>{fallback}</>;
   }
-  
+
   return <>{children}</>;
 };

@@ -11,7 +11,10 @@ import * as stylesRaw from '../styles/radar.module.css';
 import type { Cargo, WsStatus } from '../types';
 import MemoizedCargoMarker from './MemoizedCargoMarker';
 import VirtualizedCargoList from './VirtualizedCargoList';
-const styles = stylesRaw.default && typeof stylesRaw.default === 'object' ? stylesRaw.default : stylesRaw as any;
+const styles =
+  stylesRaw.default && typeof stylesRaw.default === 'object'
+    ? stylesRaw.default
+    : (stylesRaw as any);
 import '../styles/leaflet-overrides.css';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -37,9 +40,7 @@ const MapResizeHandler: React.FC = () => {
       }
     };
 
-    const timers = [100, 300, 700, 1500].map(
-      delay => setTimeout(invalidate, delay)
-    );
+    const timers = [100, 300, 700, 1500].map((delay) => setTimeout(invalidate, delay));
 
     const container = map.getContainer();
     let rafId: number;
@@ -47,7 +48,7 @@ const MapResizeHandler: React.FC = () => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(invalidate);
     });
-    
+
     if (container) {
       ro.observe(container);
     }
@@ -74,14 +75,14 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
   const initialCargoesSet = useRef(false);
 
   const throttledUpdateCargoes = useThrottle((newCargoes: Cargo[]) => {
-    setCargoes(prevCargoes => {
+    setCargoes((prevCargoes) => {
       if (!initialCargoesSet.current) {
         initialCargoesSet.current = true;
         return newCargoes;
       }
 
-      return prevCargoes.map(prevCargo => {
-        const newCargo = newCargoes.find(c => c.id === prevCargo.id);
+      return prevCargoes.map((prevCargo) => {
+        const newCargo = newCargoes.find((c) => c.id === prevCargo.id);
         if (newCargo) {
           const latChanged = Math.abs(newCargo.lat - prevCargo.lat) > 0.0001;
           const lngChanged = Math.abs(newCargo.lng - prevCargo.lng) > 0.0001;
@@ -97,9 +98,12 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
     });
   }, throttlingInterval);
 
-  const updateCargoes = useCallback((newCargoes: Cargo[]) => {
-    throttledUpdateCargoes(newCargoes);
-  }, [throttledUpdateCargoes]);
+  const updateCargoes = useCallback(
+    (newCargoes: Cargo[]) => {
+      throttledUpdateCargoes(newCargoes);
+    },
+    [throttledUpdateCargoes]
+  );
 
   useWebSocket({
     onMessage: updateCargoes,
@@ -127,17 +131,17 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
     const timer = setTimeout(() => {
       setMapReady(true);
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (!mapReady) return;
-    
+
     const resizeTimer = setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 500);
-    
+
     return () => clearTimeout(resizeTimer);
   }, [mapReady]);
 
@@ -148,31 +152,24 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
       <div className={styles.statusIndicator}>
         <div className={`${styles.statusDot} ${wsStatus}`} />
         <span className={styles.statusText}>
-          {wsStatus === 'connected' ? 'Подключено' :
-           wsStatus === 'connecting' ? 'Подключение...' : 'Отключено'}
+          {wsStatus === 'connected'
+            ? 'Подключено'
+            : wsStatus === 'connecting'
+              ? 'Подключение...'
+              : 'Отключено'}
         </span>
       </div>
 
-      <button
-        className={styles.emulateBtn}
-        onClick={handleEmulate500}
-      >
+      <button className={styles.emulateBtn} onClick={handleEmulate500}>
         Эмулировать 500 грузов
       </button>
 
-      <button
-        className={styles.mobileListBtn}
-        onClick={() => setMobileListOpen(prev => !prev)}
-      >
+      <button className={styles.mobileListBtn} onClick={() => setMobileListOpen((prev) => !prev)}>
         {mobileListOpen ? '✕' : `Грузы (${cargoes.length})`}
       </button>
 
       {mapReady ? (
-        <MapContainer
-          center={moscowCenter}
-          zoom={11}
-          className="leaflet-container"
-        >
+        <MapContainer center={moscowCenter} zoom={11} className="leaflet-container">
           <MapResizeHandler />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -183,7 +180,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
               error: () => {
                 console.warn('OpenStreetMap tiles failed to load');
                 setTileError(true);
-              }
+              },
             }}
           />
           <TileLayer
@@ -197,10 +194,10 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
                 if (tileError) {
                   console.log('Fallback tiles loaded successfully');
                 }
-              }
+              },
             }}
           />
-          {cargoes.map(cargo => (
+          {cargoes.map((cargo) => (
             <MemoizedCargoMarker
               key={cargo.id}
               id={cargo.id}
@@ -214,14 +211,17 @@ const MapComponent: React.FC<MapComponentProps> = ({ throttlingInterval = 500 })
           ))}
         </MapContainer>
       ) : (
-        <div className="leaflet-container" style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#f0f2f5',
-          fontSize: '18px',
-          color: '#666'
-        }}>
+        <div
+          className="leaflet-container"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f0f2f5',
+            fontSize: '18px',
+            color: '#666',
+          }}
+        >
           <div>Загрузка карты...</div>
         </div>
       )}

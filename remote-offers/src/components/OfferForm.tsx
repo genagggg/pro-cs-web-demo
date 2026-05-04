@@ -6,20 +6,17 @@ import { z } from 'zod';
 // Схема валидации с Zod
 const offerSchema = z.object({
   cargoType: z.string().min(1, 'Выберите тип груза'),
-  weight: z.number()
-    .positive('Вес должен быть больше 0')
-    .min(0.1, 'Минимальный вес 0.1 кг'),
-  deliveryDate: z.string()
-    .refine((date) => {
-      const selectedDate = new Date(date);
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      return selectedDate >= tomorrow;
-    }, 'Дата должна быть не раньше завтрашнего дня'),
+  weight: z.number().positive('Вес должен быть больше 0').min(0.1, 'Минимальный вес 0.1 кг'),
+  deliveryDate: z.string().refine((date) => {
+    const selectedDate = new Date(date);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    return selectedDate >= tomorrow;
+  }, 'Дата должна быть не раньше завтрашнего дня'),
   address: z.string().min(5, 'Адрес должен содержать минимум 5 символов'),
   counterparty: z.string().min(2, 'Введите имя контрагента'),
-  requiresSpecialEquipment: z.boolean().optional()
+  requiresSpecialEquipment: z.boolean().optional(),
 });
 
 type OfferFormData = z.infer<typeof offerSchema>;
@@ -29,15 +26,15 @@ const cargoTypes = [
   { value: 'perishable', label: 'Скоропортящийся груз' },
   { value: 'dangerous', label: 'Опасный груз' },
   { value: 'oversized', label: 'Крупногабаритный груз' },
-  { value: 'refrigerated', label: 'Рефрижераторный груз' }
+  { value: 'refrigerated', label: 'Рефрижераторный груз' },
 ];
 
 const OfferForm: React.FC = () => {
-  const { 
-    control, 
-    handleSubmit, 
-    watch, 
-    formState: { errors, isSubmitting } 
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
   } = useForm<OfferFormData>({
     resolver: zodResolver(offerSchema),
     defaultValues: {
@@ -46,8 +43,8 @@ const OfferForm: React.FC = () => {
       deliveryDate: '',
       address: '',
       counterparty: '',
-      requiresSpecialEquipment: false
-    }
+      requiresSpecialEquipment: false,
+    },
   });
 
   const weight = watch('weight');
@@ -55,10 +52,10 @@ const OfferForm: React.FC = () => {
 
   const onSubmit = async (data: OfferFormData) => {
     // Имитация задержки отправки
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     alert(`Заявка успешно создана!\n\nДанные заявки:\n
-Тип груза: ${cargoTypes.find(t => t.value === data.cargoType)?.label}
+Тип груза: ${cargoTypes.find((t) => t.value === data.cargoType)?.label}
 Вес: ${data.weight} кг
 Дата доставки: ${new Date(data.deliveryDate).toLocaleDateString('ru-RU')}
 Адрес: ${data.address}
@@ -67,32 +64,39 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
   };
 
   return (
-    <div style={{
-      maxWidth: '600px',
-      margin: '0 auto',
-      padding: '20px',
-      backgroundColor: '#ffffff',
-      borderRadius: '8px',
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)'
-    }}>
-      <h2 style={{ 
-        color: '#333', 
-        marginBottom: '24px',
-        borderBottom: '2px solid #4c6ef5',
-        paddingBottom: '10px'
-      }}>
+    <div
+      style={{
+        maxWidth: '600px',
+        margin: '0 auto',
+        padding: '20px',
+        backgroundColor: '#ffffff',
+        borderRadius: '8px',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <h2
+        style={{
+          color: '#333',
+          marginBottom: '24px',
+          borderBottom: '2px solid #4c6ef5',
+          paddingBottom: '10px',
+        }}
+      >
         Создание новой заявки
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Тип груза */}
         <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="cargoType" style={{ 
-            display: 'block', 
-            marginBottom: '8px', 
-            fontWeight: '600',
-            color: '#555'
-          }}>
+          <label
+            htmlFor="cargoType"
+            style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '600',
+              color: '#555',
+            }}
+          >
             Тип груза *
           </label>
           <Controller
@@ -108,7 +112,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
                   borderRadius: '4px',
                   fontSize: '14px',
                   backgroundColor: '#f9f9f9',
-                  transition: 'border-color 0.3s'
+                  transition: 'border-color 0.3s',
                 }}
               >
                 <option value="">Выберите тип груза</option>
@@ -129,12 +133,15 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Вес */}
         <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="weight" style={{ 
-            display: 'block', 
-            marginBottom: '8px', 
-            fontWeight: '600',
-            color: '#555'
-          }}>
+          <label
+            htmlFor="weight"
+            style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '600',
+              color: '#555',
+            }}
+          >
             Вес (кг) *
           </label>
           <Controller
@@ -154,7 +161,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
                   borderRadius: '4px',
                   fontSize: '14px',
                   backgroundColor: '#f9f9f9',
-                  transition: 'border-color 0.3s'
+                  transition: 'border-color 0.3s',
                 }}
                 placeholder="Введите вес груза"
               />
@@ -169,12 +176,15 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Дата доставки */}
         <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="deliveryDate" style={{ 
-            display: 'block', 
-            marginBottom: '8px', 
-            fontWeight: '600',
-            color: '#555'
-          }}>
+          <label
+            htmlFor="deliveryDate"
+            style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '600',
+              color: '#555',
+            }}
+          >
             Дата доставки *
           </label>
           <Controller
@@ -184,7 +194,9 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
               <input
                 type="date"
                 {...field}
-                min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
+                min={
+                  new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]
+                }
                 style={{
                   width: '100%',
                   padding: '10px',
@@ -192,7 +204,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
                   borderRadius: '4px',
                   fontSize: '14px',
                   backgroundColor: '#f9f9f9',
-                  transition: 'border-color 0.3s'
+                  transition: 'border-color 0.3s',
                 }}
               />
             )}
@@ -206,12 +218,15 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Адрес */}
         <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="address" style={{ 
-            display: 'block', 
-            marginBottom: '8px', 
-            fontWeight: '600',
-            color: '#555'
-          }}>
+          <label
+            htmlFor="address"
+            style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '600',
+              color: '#555',
+            }}
+          >
             Адрес доставки *
           </label>
           <Controller
@@ -229,7 +244,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
                   fontSize: '14px',
                   backgroundColor: '#f9f9f9',
                   transition: 'border-color 0.3s',
-                  resize: 'vertical'
+                  resize: 'vertical',
                 }}
                 placeholder="Введите полный адрес доставки"
               />
@@ -244,12 +259,15 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Контрагент */}
         <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="counterparty" style={{ 
-            display: 'block', 
-            marginBottom: '8px', 
-            fontWeight: '600',
-            color: '#555'
-          }}>
+          <label
+            htmlFor="counterparty"
+            style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '600',
+              color: '#555',
+            }}
+          >
             Контрагент *
           </label>
           <Controller
@@ -266,7 +284,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
                   borderRadius: '4px',
                   fontSize: '14px',
                   backgroundColor: '#f9f9f9',
-                  transition: 'border-color 0.3s'
+                  transition: 'border-color 0.3s',
                 }}
                 placeholder="Введите имя контрагента"
               />
@@ -281,13 +299,15 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
 
         {/* Условное поле: Спецтехника */}
         {showSpecialEquipment && (
-          <div style={{ 
-            marginBottom: '20px',
-            padding: '15px',
-            backgroundColor: '#fff8e1',
-            border: '1px solid #ffc107',
-            borderRadius: '4px'
-          }}>
+          <div
+            style={{
+              marginBottom: '20px',
+              padding: '15px',
+              backgroundColor: '#fff8e1',
+              border: '1px solid #ffc107',
+              borderRadius: '4px',
+            }}
+          >
             <Controller
               name="requiresSpecialEquipment"
               control={control}
@@ -297,10 +317,10 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
                     type="checkbox"
                     checked={field.value}
                     onChange={field.onChange}
-                    style={{ 
+                    style={{
                       marginRight: '10px',
                       width: '18px',
-                      height: '18px'
+                      height: '18px',
                     }}
                   />
                   <span style={{ fontWeight: '600', color: '#333' }}>
@@ -327,7 +347,7 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
               fontSize: '16px',
               fontWeight: '600',
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.3s'
+              transition: 'background-color 0.3s',
             }}
           >
             {isSubmitting ? 'Отправка...' : 'Создать заявку'}
@@ -335,14 +355,16 @@ ${data.requiresSpecialEquipment ? 'Требуется спецтехника: Д
         </div>
       </form>
 
-      <div style={{ 
-        marginTop: '20px', 
-        padding: '15px',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '4px',
-        fontSize: '12px',
-        color: '#666'
-      }}>
+      <div
+        style={{
+          marginTop: '20px',
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '4px',
+          fontSize: '12px',
+          color: '#666',
+        }}
+      >
         <strong>Примечание:</strong> Поля отмеченные * обязательны для заполнения.
       </div>
     </div>

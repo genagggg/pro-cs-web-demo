@@ -8,11 +8,16 @@ import type { Cargo } from '../types';
 
 const getStatusText = (status: Cargo['status']): string => {
   switch (status) {
-    case 'moving': return 'В движении';
-    case 'stopped': return 'Остановлен';
-    case 'delivered': return 'Доставлен';
-    case 'pending': return 'Ожидает';
-    default: return 'Неизвестно';
+    case 'moving':
+      return 'В движении';
+    case 'stopped':
+      return 'Остановлен';
+    case 'delivered':
+      return 'Доставлен';
+    case 'pending':
+      return 'Ожидает';
+    default:
+      return 'Неизвестно';
   }
 };
 
@@ -24,43 +29,47 @@ interface RowProps {
 
 type CargoRowProps = RowComponentProps<RowProps> & RowProps;
 
-const CargoRow = React.memo(({
-  index,
-  style,
-  cargoes,
-  selectedCargoId,
-  onSelectCargo,
-}: CargoRowProps): React.ReactElement => {
-  const cargo = cargoes[index];
-  const isSelected = selectedCargoId === cargo.id;
+const CargoRow = React.memo(
+  ({
+    index,
+    style,
+    cargoes,
+    selectedCargoId,
+    onSelectCargo,
+  }: CargoRowProps): React.ReactElement => {
+    const cargo = cargoes[index];
+    const isSelected = selectedCargoId === cargo.id;
 
-  const statusKey = `status${cargo.status.charAt(0).toUpperCase()}${cargo.status.slice(1)}` as keyof typeof styles;
+    const statusKey =
+      `status${cargo.status.charAt(0).toUpperCase()}${cargo.status.slice(1)}` as keyof typeof styles;
 
-  return (
-    <div style={style}>
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-      <div
-        onClick={() => onSelectCargo(cargo)}
-        className={`${styles.cargoItem} ${isSelected ? styles.selected : ''} ${styles[statusKey] ?? ''}`}
-        style={{ margin: '2px 0' }}
-      >
-        <span className={styles.cargoName}>{cargo.name}</span>
-        <span className={styles.cargoDetails}>
-          {getStatusText(cargo.status)} · {cargo.speed.toFixed(1)} км/ч
-        </span>
+    return (
+      <div style={style}>
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div
+          onClick={() => onSelectCargo(cargo)}
+          className={`${styles.cargoItem} ${isSelected ? styles.selected : ''} ${styles[statusKey] ?? ''}`}
+          style={{ margin: '2px 0' }}
+        >
+          <span className={styles.cargoName}>{cargo.name}</span>
+          <span className={styles.cargoDetails}>
+            {getStatusText(cargo.status)} · {cargo.speed.toFixed(1)} км/ч
+          </span>
+        </div>
       </div>
-    </div>
-  );
-}, (prev, next) => {
-  const prevCargo = prev.cargoes[prev.index];
-  const nextCargo = next.cargoes[next.index];
-  return (
-    prevCargo === nextCargo &&
-    prev.index === next.index &&
-    prev.selectedCargoId === next.selectedCargoId &&
-    prev.style === next.style
-  );
-}) as React.MemoExoticComponent<(props: CargoRowProps) => React.ReactElement>;
+    );
+  },
+  (prev, next) => {
+    const prevCargo = prev.cargoes[prev.index];
+    const nextCargo = next.cargoes[next.index];
+    return (
+      prevCargo === nextCargo &&
+      prev.index === next.index &&
+      prev.selectedCargoId === next.selectedCargoId &&
+      prev.style === next.style
+    );
+  }
+) as React.MemoExoticComponent<(props: CargoRowProps) => React.ReactElement>;
 
 CargoRow.displayName = 'CargoRow';
 

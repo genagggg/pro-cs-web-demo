@@ -20,7 +20,7 @@
   },
   "include": [
     "host/src/**/*",
-    "remote-radar/src/**/*", 
+    "remote-radar/src/**/*",
     "remote-offers/src/**/*",
     "types/**/*.d.ts",
     "**/*.d.ts"

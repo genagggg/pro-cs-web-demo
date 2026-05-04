@@ -14,7 +14,7 @@
 ![Форма предложения](docs/screenshots/offers.png)
 -->
 
-> *Скриншоты будут добавлены после деплоя.*
+> _Скриншоты будут добавлены после деплоя._
 
 ---
 
@@ -82,12 +82,12 @@ npm run dev
 
 Приложение будет доступно:
 
-| Модуль         | URL                                    |
-|----------------|----------------------------------------|
-| Host           | http://localhost:3000                  |
-| Remote Radar   | http://localhost:3001/remoteEntry.js   |
-| Remote Offers  | http://localhost:3002/remoteEntry.js   |
-| Mock Server    | http://localhost:3003                  |
+| Модуль        | URL                                  |
+| ------------- | ------------------------------------ |
+| Host          | http://localhost:3000                |
+| Remote Radar  | http://localhost:3001/remoteEntry.js |
+| Remote Offers | http://localhost:3002/remoteEntry.js |
+| Mock Server   | http://localhost:3003                |
 
 ### Запуск отдельных модулей
 
@@ -111,15 +111,15 @@ npm run test        # Тесты (если настроены)
 
 ## Метрики производительности
 
-| Метрика               | До оптимизации | После оптимизации |
-|-----------------------|----------------|-------------------|
-| FPS (карта, 500 маркеров) | ~25 fps       | ~58 fps           |
-| Memory (JS heap)      | ~180 MB        | ~95 MB            |
-| Time to Interactive   | ~4.2s          | ~1.8s             |
-| Bundle size (gzip)    | ~1.2 MB        | ~480 KB           |
+| Метрика                   | До оптимизации | После оптимизации |
+| ------------------------- | -------------- | ----------------- |
+| FPS (карта, 500 маркеров) | ~25 fps        | ~58 fps           |
+| Memory (JS heap)          | ~180 MB        | ~95 MB            |
+| Time to Interactive       | ~4.2s          | ~1.8s             |
+| Bundle size (gzip)        | ~1.2 MB        | ~480 KB           |
 
-> *Метрики измерены на Chrome 120, CPU 4x slowdown, MacBook M1.*  
-> *После деплоя замените на актуальные значения.*
+> _Метрики измерены на Chrome 120, CPU 4x slowdown, MacBook M1._  
+> _После деплоя замените на актуальные значения._
 
 ---
 
@@ -129,26 +129,26 @@ npm run test        # Тесты (если настроены)
 
 В `.github/workflows/ci.yml` определены следующие джобы:
 
-| Job              | Trigger            | Описание                              |
-|------------------|--------------------|---------------------------------------|
-| `lint`           | push / PR          | ESLint + Prettier проверка            |
-| `typecheck`      | push / PR          | TypeScript `--noEmit`                 |
-| `build`          | push / PR          | Webpack сборка всех модулей           |
-| `test`           | push / PR          | Запуск тестов (если настроены)        |
-| `security-audit` | PR only            | npm audit проверка зависимостей       |
-| `deploy-preview` | PR only            | Деплой preview на Vercel              |
-| `deploy-production` | push main/master | Деплой production на Vercel           |
+| Job                 | Trigger          | Описание                        |
+| ------------------- | ---------------- | ------------------------------- |
+| `lint`              | push / PR        | ESLint + Prettier проверка      |
+| `typecheck`         | push / PR        | TypeScript `--noEmit`           |
+| `build`             | push / PR        | Webpack сборка всех модулей     |
+| `test`              | push / PR        | Запуск тестов (если настроены)  |
+| `security-audit`    | PR only          | npm audit проверка зависимостей |
+| `deploy-preview`    | PR only          | Деплой preview на Vercel        |
+| `deploy-production` | push main/master | Деплой production на Vercel     |
 
 ### Деплой на Vercel
 
 Каждый модуль деплоится как отдельный Vercel-проект:
 
-| Проект         | Vercel Project             | URL (production)                     |
-|----------------|----------------------------|--------------------------------------|
-| Host           | `pro-cs-host`              | `https://pro-cs-host.vercel.app`     |
-| Remote Radar   | `pro-cs-radar`             | `https://pro-cs-radar.vercel.app`    |
-| Remote Offers  | `pro-cs-offers`            | `https://pro-cs-offers.vercel.app`   |
-| Mock Server    | `pro-cs-mock`              | `https://pro-cs-mock.vercel.app`     |
+| Проект        | Vercel Project  | URL (production)                   |
+| ------------- | --------------- | ---------------------------------- |
+| Host          | `pro-cs-host`   | `https://pro-cs-host.vercel.app`   |
+| Remote Radar  | `pro-cs-radar`  | `https://pro-cs-radar.vercel.app`  |
+| Remote Offers | `pro-cs-offers` | `https://pro-cs-offers.vercel.app` |
+| Mock Server   | `pro-cs-mock`   | `https://pro-cs-mock.vercel.app`   |
 
 Переменные окружения для host (production):
 
@@ -177,6 +177,7 @@ npm run deploy:mock
 ## Ссылка на живое демо
 
 <!-- После деплоя замените на актуальные ссылки: -->
+
 - **Host**: [https://pro-cs-host.vercel.app](https://pro-cs-host.vercel.app)
 - **Radar Remote**: [https://pro-cs-radar.vercel.app](https://pro-cs-radar.vercel.app)
 - **Offers Remote**: [https://pro-cs-offers.vercel.app](https://pro-cs-offers.vercel.app)

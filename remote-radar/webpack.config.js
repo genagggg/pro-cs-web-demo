@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist'),
       filename: isProduction ? '[name].[contenthash].js' : '[name].js',
       publicPath: 'auto',
-      clean: true
+      clean: true,
     },
     devServer: {
       port: 3001,
@@ -22,8 +22,8 @@ module.exports = (env, argv) => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
         'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
-        'Access-Control-Allow-Credentials': 'true'
-      }
+        'Access-Control-Allow-Credentials': 'true',
+      },
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.jsx'],
@@ -37,9 +37,9 @@ module.exports = (env, argv) => {
             loader: 'ts-loader',
             options: {
               configFile: path.resolve(__dirname, '../tsconfig.json'),
-              transpileOnly: true
-            }
-          }
+              transpileOnly: true,
+            },
+          },
         },
         {
           test: /\.module\.css$/,
@@ -65,9 +65,9 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.(png|jpg|jpeg|gif|svg)$/,
-          type: 'asset/resource'
-        }
-      ]
+          type: 'asset/resource',
+        },
+      ],
     },
     plugins: [
       new Dotenv(),
@@ -78,22 +78,22 @@ module.exports = (env, argv) => {
           './RadarApp': './src/RadarApp.tsx',
           './bootstrap': './src/bootstrap.tsx',
           './FPSDisplay': './src/components/FPSDisplay.tsx',
-          './useFPS': './src/hooks/useFPS.ts'
+          './useFPS': './src/hooks/useFPS.ts',
         },
         shared: {
           react: {
             singleton: true,
-            requiredVersion: '^18.2.0'
+            requiredVersion: '^18.2.0',
           },
           'react-dom': {
             singleton: true,
-            requiredVersion: '^18.2.0'
-          }
-        }
+            requiredVersion: '^18.2.0',
+          },
+        },
       }),
       new HtmlWebpackPlugin({
-        template: './public/index.html'
-      })
-    ]
+        template: './public/index.html',
+      }),
+    ],
   };
 };
