@@ -34,7 +34,6 @@ desktop.ini
 
 # TypeScript
 *.js.map
-*.d.ts
 *.d.ts.map
 
 # Test coverage
