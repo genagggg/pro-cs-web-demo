@@ -236,8 +236,8 @@ const RoutesTable: React.FC = () => {
         header: 'Водитель',
         cell: (info) => <div style={{ color: '#666' }}>{info.getValue()}</div>,
       }),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [editingId]
   );
 
