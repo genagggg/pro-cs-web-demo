@@ -1,7 +1,5 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "host/dist",
-  "installCommand": "npm ci",
-  "framework": "webpack",
-  "regions": ["iad1"]
+  "installCommand": "npm ci"
 }
