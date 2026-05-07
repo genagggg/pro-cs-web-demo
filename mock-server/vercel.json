@@ -1,4 +1,10 @@
 {
   "buildCommand": null,
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/api/radar/cargoes", "destination": "/api/cargoes" },
+    { "source": "/api/vehicles", "destination": "/api/vehicles" },
+    { "source": "/api/offers", "destination": "/api/offers" },
+    { "source": "/health", "destination": "/api/health" }
+  ]
 }
