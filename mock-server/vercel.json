@@ -1,14 +1,4 @@
 {
-  "buildCommand": "cd .. && npm ci && npm run build --workspace=mock-server",
-  "outputDirectory": ".",
-  "functions": {
-    "api/index.js": {
-      "memory": 128,
-      "maxDuration": 10
-    }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" },
-    { "source": "/health", "destination": "/api/index" }
-  ]
+  "buildCommand": null,
+  "outputDirectory": "."
 }

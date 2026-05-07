@@ -1,15 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-const MOSCOW_CENTER = { lat: 55.7558, lng: 37.6173 };
-const RADIUS = 0.5;
-
 const generateCargoes = () => {
+  const MOSCOW_CENTER = { lat: 55.7558, lng: 37.6173 };
+  const RADIUS = 0.5;
   const cargoes = [];
   const cargoNames = [
     'Товары для магазина', 'Строительные материалы', 'Оборудование для офиса',
@@ -49,23 +40,4 @@ const mockOffers = [
   { id: 3, client: 'Global Inc', service: 'Bulk', price: 3500, status: 'pending' },
 ];
 
-app.get('/api/vehicles', (req, res) => res.json(mockVehicles));
-
-app.get('/api/offers', (req, res) => res.json(mockOffers));
-
-app.post('/api/offers', (req, res) => {
-  const newOffer = { id: mockOffers.length + 1, ...req.body, status: 'pending' };
-  mockOffers.push(newOffer);
-  res.status(201).json(newOffer);
-});
-
-app.get('/api/radar/cargoes', (req, res) => {
-  const data = cargoes.map(({ id, lat, lng, name, status, speed }) => ({ id, lat, lng, name, status, speed }));
-  res.json(data);
-});
-
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString(), cargoes: cargoes.length });
-});
-
-module.exports = app;
+module.exports = { cargoes, mockVehicles, mockOffers };
