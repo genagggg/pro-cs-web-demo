@@ -70,7 +70,7 @@ module.exports = (env, argv) => {
       ],
     },
     plugins: [
-      new Dotenv(),
+      new Dotenv({ systemvars: true }),
       new ModuleFederationPlugin({
         name: 'radar',
         filename: 'remoteEntry.js',
