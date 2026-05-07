@@ -18,9 +18,7 @@ const generateCargoes = () => {
     'Медицинские товары', 'Бытовая техника', 'Ювелирные изделия',
     'Музыкальные инструменты', 'Садовая техника', 'Канцелярия', 'Посуда',
   ];
-
   const statuses = ['moving', 'stopped', 'delivered', 'pending'];
-
   for (let i = 0; i < 20; i++) {
     const angle = (i / 20) * 2 * Math.PI;
     const lat = MOSCOW_CENTER.lat + RADIUS * Math.cos(angle) * (0.7 + Math.random() * 0.6);
