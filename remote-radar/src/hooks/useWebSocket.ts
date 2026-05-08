@@ -2,8 +2,13 @@ import { useEffect, useRef, useCallback } from 'react';
 
 import type { Cargo, WsStatus } from '../types';
 
-const WS_URL = process.env.WS_URL || 'ws://localhost:3003';
-const API_URL = process.env.API_URL || 'http://localhost:3003/api/radar/cargoes';
+const getBaseUrl = () =>
+  typeof window !== 'undefined'
+    ? `${window.location.protocol}//${window.location.host}`
+    : 'http://localhost:3003';
+
+const WS_URL = 'ws://localhost:3003';
+const API_URL = process.env.API_URL || `${getBaseUrl()}/api/radar/cargoes`;
 const RECONNECT_DELAY = 3000;
 const POLL_INTERVAL = 5000;
 

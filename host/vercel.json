@@ -1,5 +1,11 @@
 {
   "buildCommand": "npm run build --workspace=host",
   "outputDirectory": "dist",
-  "installCommand": "cd .. && npm ci"
+  "installCommand": "cd .. && npm ci",
+  "rewrites": [
+    { "source": "/api/radar/cargoes", "destination": "/api/cargoes" },
+    { "source": "/api/vehicles", "destination": "/api/vehicles" },
+    { "source": "/api/offers", "destination": "/api/offers" },
+    { "source": "/health", "destination": "/api/health" }
+  ]
 }
