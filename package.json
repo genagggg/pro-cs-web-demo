@@ -16,6 +16,8 @@
     "dev:offers": "npm run dev --workspace=remote-offers",
     "dev:mock": "npm run dev --workspace=mock-server",
     "build": "npm run build --workspaces",
+    "build:prod": "npm run build --workspace=remote-radar && npm run build --workspace=remote-offers && npm run build --workspace=host",
+    "start": "node mock-server/server.js",
     "clean": "rimraf node_modules && npm run clean --workspaces",
     "clean:all": "rimraf node_modules && rimraf host/node_modules && rimraf remote-radar/node_modules && rimraf remote-offers/node_modules && rimraf mock-server/node_modules",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx --max-warnings 0 .",
@@ -24,11 +26,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,html,css,scss}\"",
     "type-check": "tsc --noEmit",
     "test": "echo 'No tests configured — install Jest to enable'",
-    "deploy": "vercel --prod",
-    "deploy:host": "vercel --prod --cwd host",
-    "deploy:radar": "vercel --prod --cwd remote-radar",
-    "deploy:offers": "vercel --prod --cwd remote-offers",
-    "deploy:mock": "vercel --prod --cwd mock-server"
+    "deploy": "echo 'Docker-based deployment — see README'"
   },
   "devDependencies": {
     "@types/eslint": "^9.6.1",

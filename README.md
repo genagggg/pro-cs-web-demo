@@ -1,20 +1,6 @@
 # Pro CS Web Demo — Enterprise Logistics System
 
-> Монорепозиторий на Module Federation для enterprise-системы логистики с WebSocket-обновлениями в реальном времени.
-
-[![CI/CD Pipeline](https://github.com/YOUR_ORG/pro-cs-web-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/pro-cs-web-demo/actions/workflows/ci.yml)
-
----
-
-## Скриншоты
-
-<!-- Добавьте скриншоты после деплоя:
-![Главный экран](docs/screenshots/dashboard.png)
-![Карта с транспортом](docs/screenshots/radar.png)
-![Форма предложения](docs/screenshots/offers.png)
--->
-
-> _Скриншоты будут добавлены после деплоя._
+Монорепозиторий на Module Federation для enterprise-системы логистики с WebSocket-обновлениями в реальном времени.
 
 ---
 
@@ -48,150 +34,130 @@
        │   Mock Server    │
        │   (:3003)        │
        │ Express + WS     │
+       │ + Static Serve   │
        └──────────────────┘
 ```
 
 ### WebSocket
 
-- Mock-сервер отправляет обновления позиций транспорта через WebSocket (`ws://localhost:3003`)
+- Mock-сервер отправляет обновления позиций грузов через WebSocket (`ws://localhost:3003`)
 - Remote-radar подписывается и обновляет маркеры на карте Leaflet в реальном времени
-- Частота обновления: ~10 сообщений/сек
+- Частота обновления: каждые 2 секунды
 
 ---
 
-## Инструкция по локальному запуску
+## Быстрый старт
 
 ### Требования
 
 - Node.js >= 18
 - npm >= 9
 
-### Установка и запуск
+### Установка и dev-запуск
 
 ```bash
-# 1. Клонировать репозиторий
-git clone https://github.com/YOUR_ORG/pro-cs-web-demo.git
+git clone <repo-url>
 cd pro-cs-web-demo
-
-# 2. Установить зависимости
 npm install
-
-# 3. Запустить все модули одновременно
 npm run dev
 ```
-
-Приложение будет доступно:
 
 | Модуль        | URL                                  |
 | ------------- | ------------------------------------ |
 | Host          | http://localhost:3000                |
-| Remote Radar  | http://localhost:3001/remoteEntry.js |
-| Remote Offers | http://localhost:3002/remoteEntry.js |
+| Remote Radar  | http://localhost:3001                |
+| Remote Offers | http://localhost:3002                |
 | Mock Server   | http://localhost:3003                |
 
-### Запуск отдельных модулей
+### Production сборка и запуск
 
 ```bash
-npm run dev:host    # только host
-npm run dev:radar   # только radar
-npm run dev:offers  # только offers
-npm run dev:mock    # только mock-сервер
+npm run build:prod
+npm run start
 ```
 
-### Линтер, типы, сборка
+Приложение доступно на **http://localhost:3003** — всё на одном порту:
+- Фронт
+- REST API (`/api/radar/cargoes`, `/api/vehicles`, `/api/offers`)
+- WebSocket
+- Health check (`/health`)
 
-```bash
-npm run lint        # ESLint
-npm run type-check  # TypeScript проверка
-npm run build       # Production сборка всех модулей
-npm run test        # Тесты (если настроены)
+---
+
+## Команды
+
+| Команда            | Описание                           |
+| ------------------ | ---------------------------------- |
+| `npm run dev`      | Запуск всех модулей в dev-режиме   |
+| `npm run dev:host` | Только host                        |
+| `npm run dev:radar`| Только radar                       |
+| `npm run dev:offers`| Только offers                     |
+| `npm run dev:mock` | Только mock-сервер                 |
+| `npm run build`    | Dev-сборка всех модулей            |
+| `npm run build:prod` | Production сборка                |
+| `npm run start`    | Запуск production сервера          |
+| `npm run lint`     | ESLint                             |
+| `npm run type-check` | TypeScript проверка              |
+| `npm run format`   | Prettier                           |
+
+---
+
+## Docker (планируется)
+
+```dockerfile
+# Пример Dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY . .
+RUN npm ci && npm run build:prod
+EXPOSE 3003
+CMD ["node", "mock-server/server.js"]
+```
+
+```yaml
+# Пример docker-compose.yml
+services:
+  app:
+    build: .
+    ports:
+      - "3003:3003"
 ```
 
 ---
 
-## Метрики производительности
-
-| Метрика                   | До оптимизации | После оптимизации |
-| ------------------------- | -------------- | ----------------- |
-| FPS (карта, 500 маркеров) | ~25 fps        | ~58 fps           |
-| Memory (JS heap)          | ~180 MB        | ~95 MB            |
-| Time to Interactive       | ~4.2s          | ~1.8s             |
-| Bundle size (gzip)        | ~1.2 MB        | ~480 KB           |
-
-> _Метрики измерены на Chrome 120, CPU 4x slowdown, MacBook M1._  
-> _После деплоя замените на актуальные значения._
-
----
-
-## CI/CD Pipeline
-
-### GitHub Actions
-
-В `.github/workflows/ci.yml` определены следующие джобы:
-
-| Job                 | Trigger          | Описание                        |
-| ------------------- | ---------------- | ------------------------------- |
-| `lint`              | push / PR        | ESLint + Prettier проверка      |
-| `typecheck`         | push / PR        | TypeScript `--noEmit`           |
-| `build`             | push / PR        | Webpack сборка всех модулей     |
-| `test`              | push / PR        | Запуск тестов (если настроены)  |
-| `security-audit`    | PR only          | npm audit проверка зависимостей |
-| `deploy-preview`    | PR only          | Деплой preview на Vercel        |
-| `deploy-production` | push main/master | Деплой production на Vercel     |
-
-### Деплой на Vercel
-
-Каждый модуль деплоится как отдельный Vercel-проект:
-
-| Проект        | Vercel Project  | URL (production)                   |
-| ------------- | --------------- | ---------------------------------- |
-| Host          | `pro-cs-host`   | `https://pro-cs-host.vercel.app`   |
-| Remote Radar  | `pro-cs-radar`  | `https://pro-cs-radar.vercel.app`  |
-| Remote Offers | `pro-cs-offers` | `https://pro-cs-offers.vercel.app` |
-| Mock Server   | `pro-cs-mock`   | `https://pro-cs-mock.vercel.app`   |
-
-Переменные окружения для host (production):
+## Структура проекта
 
 ```
-RADAR_URL=https://pro-cs-radar.vercel.app
-OFFERS_URL=https://pro-cs-offers.vercel.app
-API_URL=https://pro-cs-mock.vercel.app
-WS_URL=wss://pro-cs-mock.vercel.app
+pro-cs-web-demo/
+├── host/                    # Главное приложение
+│   ├── src/
+│   │   ├── App.tsx          # lazy loading remote'ов
+│   │   └── index.tsx
+│   ├── public/
+│   │   └── index.html
+│   ├── webpack.config.js
+│   └── package.json
+├── remote-radar/            # Микрофронтенд карты
+│   ├── src/
+│   │   ├── bootstrap.tsx
+│   │   ├── RadarApp.tsx
+│   │   └── hooks/useWebSocket.ts
+│   ├── webpack.config.js
+│   └── package.json
+├── remote-offers/           # Микрофронтенд заявок
+│   ├── src/
+│   │   ├── bootstrap.tsx
+│   │   └── OffersApp.tsx
+│   ├── webpack.config.js
+│   └── package.json
+├── mock-server/             # Express + WebSocket сервер
+│   ├── server.js
+│   └── package.json
+├── types/                   # Общие типы TypeScript
+├── tsconfig.json
+├── package.json             # Корневой (npm workspaces)
+└── README.md
 ```
-
-### Деплой через CLI
-
-```bash
-# Деплой всех модулей
-npm run deploy
-
-# Деплой конкретного модуля
-npm run deploy:host
-npm run deploy:radar
-npm run deploy:offers
-npm run deploy:mock
-```
-
----
-
-## Ссылка на живое демо
-
-<!-- После деплоя замените на актуальные ссылки: -->
-
-- **Host**: [https://pro-cs-host.vercel.app](https://pro-cs-host.vercel.app)
-- **Radar Remote**: [https://pro-cs-radar.vercel.app](https://pro-cs-radar.vercel.app)
-- **Offers Remote**: [https://pro-cs-offers.vercel.app](https://pro-cs-offers.vercel.app)
-
----
-
-## Запись демо-видео
-
-```bash
-# Убедитесь, что все сервера запущены: npm run dev
-bash generate-demo-video.sh demo.mp4
-```
-
-Требуется `ffmpeg`. На Windows используйте QuickTime или OBS Studio.
 
 ---
 
@@ -203,50 +169,14 @@ bash generate-demo-video.sh demo.mp4
 - **npm workspaces** (монорепозиторий)
 - **Leaflet** + react-leaflet (карты)
 - **react-hook-form** + Zod (формы)
-- **@dnd-kit** (drag & drop таблицы)
+- **@dnd-kit** (drag & drop)
 - **@tanstack/react-table** (таблицы)
 - **Express** + **ws** (WebSocket сервер)
 
 ---
 
-## Структура проекта
+## Планы по деплою
 
-```
-pro-cs-web-demo/
-├── host/                    # Главное приложение (порт 3000)
-│   ├── src/
-│   │   ├── App.tsx          # Основной компонент с lazy loading
-│   │   └── index.tsx        # Точка входа
-│   ├── public/
-│   │   └── index.html
-│   ├── webpack.config.js    # Конфигурация Webpack
-│   ├── vercel.json          # Конфигурация Vercel
-│   └── package.json
-├── remote-radar/            # Микрофронтенд карты (порт 3001)
-│   ├── src/
-│   │   ├── bootstrap.tsx    # Точка входа remote модуля
-│   │   └── RadarApp.tsx     # Компонент карты
-│   ├── public/
-│   │   └── index.html
-│   ├── webpack.config.js
-│   ├── vercel.json
-│   └── package.json
-├── remote-offers/           # Микрофронтенд форм (порт 3002)
-│   ├── src/
-│   │   ├── bootstrap.tsx
-│   │   └── OffersApp.tsx    # Компонент форм
-│   ├── public/
-│   │   └── index.html
-│   ├── webpack.config.js
-│   ├── vercel.json
-│   └── package.json
-├── mock-server/             # Mock сервер (порт 3003)
-│   ├── server.js            # Express + WebSocket сервер
-│   ├── vercel.json
-│   └── package.json
-├── types/                   # Общие TypeScript типы
-├── .github/workflows/       # GitHub Actions CI/CD
-├── generate-demo-video.sh   # Скрипт записи демо
-├── tsconfig.json            # Общая конфигурация TypeScript
-└── package.json             # Корневой package.json
-```
+- [x] Локальный запуск: `npm run build:prod && npm run start`
+- [ ] Docker: `Dockerfile` + `docker-compose.yml`
+- [ ] Хостинг: Render / Railway / VPS

@@ -2,14 +2,19 @@ const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// Enable CORS for all routes
 app.use(cors());
 app.use(express.json());
+
+// Serve frontend static files
+app.use('/radar', express.static(path.join(__dirname, '..', 'remote-radar', 'dist')));
+app.use('/offers', express.static(path.join(__dirname, '..', 'remote-offers', 'dist')));
+app.use('/', express.static(path.join(__dirname, '..', 'host', 'dist')));
 
 // Начальные координаты Москвы
 const MOSCOW_CENTER = { lat: 55.7558, lng: 37.6173 };
@@ -234,13 +239,24 @@ app.get('/api/radar/cargoes', (req, res) => {
   res.json(data);
 });
 
+// SPA fallback — все нескореспондированные маршруты отдают index.html
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/') || req.path.startsWith('/radar') || req.path.startsWith('/offers')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  res.sendFile(path.join(__dirname, '..', 'host', 'dist', 'index.html'));
+});
+
 const PORT = process.env.PORT || 3003;
 server.listen(PORT, () => {
   console.log(`=== Mock Server for Radar Module ===`);
   console.log(`Port: ${PORT}`);
+  console.log(`  Local: http://localhost:${PORT}/`);
   console.log(`REST API: http://localhost:${PORT}/api/radar/cargoes`);
   console.log(`WebSocket: ws://localhost:${PORT}`);
-  console.log(`Health: http://localhost:${PORT}/health`);
+  console.log(`Radar:   http://localhost:${PORT}/radar`);
+  console.log(`Offers:  http://localhost:${PORT}/offers`);
+  console.log(`Health:  http://localhost:${PORT}/health`);
   console.log(`\nРадар отслеживает ${cargoes.length} грузов вокруг Москвы`);
   console.log(`Обновление координат: каждые 2 секунды`);
   console.log(`====================================\n`);

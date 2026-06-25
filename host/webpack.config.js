@@ -5,8 +5,8 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
-  const radarUrl = process.env.RADAR_URL || 'http://localhost:3001';
-  const offersUrl = process.env.OFFERS_URL || 'http://localhost:3002';
+  const radarUrl = isProduction ? '/radar' : (process.env.RADAR_URL || 'http://localhost:3001');
+  const offersUrl = isProduction ? '/offers' : (process.env.OFFERS_URL || 'http://localhost:3002');
 
   return {
     entry: './src/index.tsx',
